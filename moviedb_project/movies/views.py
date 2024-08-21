@@ -2,18 +2,20 @@ import requests
 from django.shortcuts import render
 from .models import Movie
 from datetime import datetime
+from django.conf import settings
+api_key = settings.API_KEY
 def home(request):
     query = request.GET.get('query', '')
     
     if query:
-        api_url = f"https://api.themoviedb.org/3/search/movie?api_key=7794df5bb96380f0722ed71cde5e1ba5&query={query}"
+        api_url = f"https://api.themoviedb.org/3/search/movie?api_key={api_key}&query={query}"
         response = requests.get(api_url)
         movies_data = response.json().get('results', [])
 
       
     else:
         # Retrieve all movies for home page
-        api_url = f"https://api.themoviedb.org/3/movie/popular?api_key=7794df5bb96380f0722ed71cde5e1ba5&language=en-US&page=1"
+        api_url = f"https://api.themoviedb.org/3/movie/popular?api_key={api_key}&language=en-US&page=1"
         response = requests.get(api_url)
         movies_data = response.json().get('results', [])
     movies = []
@@ -35,7 +37,8 @@ def home(request):
             )
             movies.append(movie)
         except :
-            print("something went wrong",data)
+            # print("something went wrong",data)
+            pass
     
 
     return render(request, 'home.html', {'movies': movies, 'query': query})
